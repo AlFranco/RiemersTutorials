@@ -11,7 +11,7 @@ General considerations
 	I'm using Windows 8, Visual Studio 2012, ReSharper and StyleCop to build the exmaples
 
 
-You can start looking at the tutorials here http://www.riemers.net/eng/Tutorials/XNA/Csharp/series1.php (see the contents menu on the right)
+You can start looking at Riemer's original tutorials here http://www.riemers.net/eng/Tutorials/XNA/Csharp/series1.php (see the contents menu on the right)
 
 Hope this is useful
 
