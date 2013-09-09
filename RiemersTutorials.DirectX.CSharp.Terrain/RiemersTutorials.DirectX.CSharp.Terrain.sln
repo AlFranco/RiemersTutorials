@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.5.RotationAndTranslation", "RiemersTutorials.DirectX.CSharp.Terrain.RotationAndTranslation\RiemersTutorials.DirectX.CSharp.Terrain.5.RotationAndTranslation.csproj", "{EE217FFD-8283-41E5-AEDA-5E9577C68414}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.6.Indices", "RiemersTutorials.DirectX.CSharp.Terrain.Indices\RiemersTutorials.DirectX.CSharp.Terrain.6.Indices.csproj", "{A5EEC089-9238-44AC-BC42-97C8EC83A081}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.7.TerrainCreation", "RiemersTutorials.DirectX.CSharp.Terrain.TerrainCreation\RiemersTutorials.DirectX.CSharp.Terrain.7.TerrainCreation.csproj", "{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +41,14 @@ Global
 		{EE217FFD-8283-41E5-AEDA-5E9577C68414}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE217FFD-8283-41E5-AEDA-5E9577C68414}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE217FFD-8283-41E5-AEDA-5E9577C68414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5EEC089-9238-44AC-BC42-97C8EC83A081}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5EEC089-9238-44AC-BC42-97C8EC83A081}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5EEC089-9238-44AC-BC42-97C8EC83A081}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5EEC089-9238-44AC-BC42-97C8EC83A081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
