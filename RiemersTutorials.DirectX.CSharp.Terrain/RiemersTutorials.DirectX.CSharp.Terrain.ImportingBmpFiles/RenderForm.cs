@@ -5,18 +5,20 @@
 // <summary>
 //   Riemers Tutorials of DirectX with C#
 //   Chapter 1 Terrain
-//   SubChapter 7 Terrain creation basics
+//   SubChapter 7 Terrain creation from file
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
+namespace RiemersTutorials.DirectX.CSharp.Terrain.ImportingBmpFiles
 {
     using System;
     using System.Drawing;
+    using System.IO;
     using System.Windows.Forms;
 
     using Microsoft.DirectX;
     using Microsoft.DirectX.Direct3D;
+    using Microsoft.DirectX.DirectInput;
 
     /// <summary>
     /// Form that we'll along these series of chapters
@@ -27,7 +29,17 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         ///  In short, a device is a direct link to your graphical adapter. 
         ///  It is an object that gives you direct access to the piece of hardware inside your computer
         /// </summary>
-        private Device device;
+        private Microsoft.DirectX.Direct3D.Device graphicsDevice;
+
+        /// <summary>
+        /// The device pointing to our keyboard
+        /// </summary>
+        private Microsoft.DirectX.DirectInput.Device keyboardDevice;
+
+        /// <summary>
+        /// Our angle of rotation obtained from the keyboard
+        /// </summary>
+        private float angle;
 
         /// <summary>
         /// Vertices set as private attribute for refactoring in methods
@@ -52,15 +64,15 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         /// <summary>
         /// Sets how many vertices in width the triangle grid will have
         /// </summary>
-        private int triangleGridWidth = 4;
+        private int triangleGridWidth = 64;
 
         /// <summary>
         /// Sets how many vertices in height the triangle grid will have
         /// </summary>
-        private int triangleGridHeight = 3;
+        private int triangleGridHeight = 64;
 
         /// <summary>
-        /// Array to hold the information of the heigh on each vertex
+        /// Array to hold the information of the height on each vertex
         /// </summary>
         private int[,] heightData;
 
@@ -100,6 +112,9 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
                 // Declare indices
                 ourDxForm.IndicesDeclaration();
 
+                // Initialize the keyboard
+                ourDxForm.InitializeKeyboard();
+
                 // Run the Form
                 Application.Run(ourDxForm);
             }
@@ -120,13 +135,28 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
             // Render the graphics using the hardware
             // Bind 'this' window to the device 
             // For now we want all 'vertex processing' to happen on the CPU
-            this.device = new Device(0, DeviceType.Hardware, this, CreateFlags.HardwareVertexProcessing, presentParams);
+            this.graphicsDevice = new Microsoft.DirectX.Direct3D.Device(0, Microsoft.DirectX.Direct3D.DeviceType.Hardware, this, CreateFlags.HardwareVertexProcessing, presentParams);
 
             // Set the device in wireframe mode
-            this.device.RenderState.FillMode = FillMode.WireFrame;
+            this.graphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 
             // Fix for window resizing for the demo
-            this.device.DeviceReset += this.HandleResetEvent;
+            this.graphicsDevice.DeviceReset += this.HandleResetEvent;
+        }
+
+        /// <summary>
+        /// Initialize the keyboard device
+        /// </summary>
+        public void InitializeKeyboard()
+        {
+            // The first line allocates the system's default keyboard to your variable keyb. 
+            this.keyboardDevice = new Microsoft.DirectX.DirectInput.Device(SystemGuid.Keyboard);
+
+            // Then you set some flags that adds default keyboard behavior to keyb. For example, if your window loses focus, your keyboard won't be attached to it any longer. 
+            this.keyboardDevice.SetCooperativeLevel(this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+
+            // Don't forget to acquire your keyboard and to call this method from your Main method:
+            this.keyboardDevice.Acquire();
         }
 
         /// <summary>
@@ -140,20 +170,23 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         {
             // The Clear method will fill the window with a solid color, darkslateblue in our case
             // The ClearFlags indicate what we actually want to clear, in our case the target window
-            this.device.Clear(ClearFlags.Target, Color.DarkSlateBlue, 1.0f, 0);
+            this.graphicsDevice.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
 
             // Tell the device the we’re going to build the 'scene'
             // The scene is the whole world of objects the device has to display
-            this.device.BeginScene();
+            this.graphicsDevice.BeginScene();
 
             // Tell the device what kind of vertex information to expect.
-            this.device.VertexFormat = CustomVertex.PositionColored.Format;
+            this.graphicsDevice.VertexFormat = CustomVertex.PositionColored.Format;
 
             // Set where the vertices are coming from
-            this.device.SetStreamSource(0, this.vertexBuffer, 0);
+            this.graphicsDevice.SetStreamSource(0, this.vertexBuffer, 0);
 
             // Set how those vertices are going to be indexed on the screen
-            this.device.Indices = this.indexBuffer;
+            this.graphicsDevice.Indices = this.indexBuffer;
+
+            // Set the world matrix doing a translation based on the size of the trianglegrid and a rotation angle stablished by our keyboard
+            this.graphicsDevice.Transform.World = Matrix.Translation(-this.triangleGridHeight / 2, -this.triangleGridWidth / 2, 0) * Matrix.RotationZ(this.angle);
 
             // This line actually draws the index primitives
             // The first argument indicates that it has to paint triangles
@@ -161,16 +194,19 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
             // Then you indicate the minimum amount of used indices. We give 0, which will bring no speed optimization. 
             // Then the amount of used vertices and the starting point in our vertexbuffer. 
             // Finally, we have to indicate how many primitives (=triangles) we want to be drawn.
-            this.device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, this.triangleGridWidth * this.triangleGridHeight, 0, this.indices.Length / 3);
+            this.graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, this.triangleGridWidth * this.triangleGridHeight, 0, this.indices.Length / 3);
 
             // End of the scene definition
-            this.device.EndScene();
+            this.graphicsDevice.EndScene();
 
             // To actually update our display, we have to Present the updates to the device
-            this.device.Present();
+            this.graphicsDevice.Present();
 
             // Force the window to repaint
             this.Invalidate();
+
+            // Read the keyboard
+            this.ReadKeyboard();
         }
 
         /// <summary>
@@ -213,23 +249,22 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
             // Set the view aspect ratio, which is 1 in our case, will be different if our window is a rectangle instead of a square
             // Near clipping plane : any objects closer to the camera than 1f will not be shown
             // Far clipping pane : any object farther than 50f won't be shown 
-            this.device.Transform.Projection = Matrix.PerspectiveFovLH(
-                (float)Math.PI / 4, (float)this.Width / this.Height, 1f, 50f);
+            this.graphicsDevice.Transform.Projection = Matrix.PerspectiveFovLH(
+                (float)Math.PI / 4, this.Width / this.Height, 1f, 250f);
 
             // Position the camera
-            // Define the position we position it 30 units above our (0,0,0) point, the origin
-            // Set the target point the camera is looking at. We will be looking at our origin
+            // Define the position we position
+            // Set the target point the camera is looking at.
             // Define which vector will be considered as 'up'
-            // this.device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, 30), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-            // Since the coordinates system is left-handed to see the green corner on lower right we have to position the camera in -Z axis
-            this.device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            this.graphicsDevice.Transform.View = Matrix.LookAtLH(
+                new Vector3(80, 0, 120), new Vector3(-20, 0, 0), new Vector3(0, 0, 1));
 
             // We are also required to place some lights to avoid the triangle to be black
             // Disable lighting to avoid this problem for now
-            this.device.RenderState.Lighting = false;
+            this.graphicsDevice.RenderState.Lighting = false;
 
             // Avoid the problem of clockwise or counter clock wise define vertices disabling cullmode
-            this.device.RenderState.CullMode = Cull.None;
+            this.graphicsDevice.RenderState.CullMode = Cull.None;
         }
 
         /// <summary>
@@ -238,7 +273,13 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         private void VertexDeclaration()
         {
             // Create Vertex Buffer with some parameters
-            this.vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionColored), this.triangleGridWidth * this.triangleGridHeight, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionColored.Format, Pool.Default);
+            this.vertexBuffer = new VertexBuffer(
+                typeof(CustomVertex.PositionColored),
+                this.triangleGridWidth * this.triangleGridHeight,
+                this.graphicsDevice,
+                Usage.Dynamic | Usage.WriteOnly,
+                CustomVertex.PositionColored.Format,
+                Pool.Default);
 
             // Create an array to hold the information for 3 vertices.
             // Change from TransformedColored to PositionColored
@@ -273,7 +314,7 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
             this.indexBuffer = new IndexBuffer(
                 typeof(int),
                 (this.triangleGridWidth - 1) * (this.triangleGridHeight - 1) * 6,
-                this.device,
+                this.graphicsDevice,
                 Usage.WriteOnly,
                 Pool.Default);
 
@@ -319,7 +360,7 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         private void HandleResetEvent(object sender, EventArgs e)
         {
             // Reset the WireFrame mode
-            this.device.RenderState.FillMode = FillMode.WireFrame;
+            this.graphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 
             // Position the camera
             this.CameraPositioning();
@@ -332,25 +373,82 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         }
 
         /// <summary>
-        /// Initialized the heigh information on every vertex
+        /// Initialized the height information on every vertex
         /// </summary>
         private void LoadHeightData()
         {
-            this.heightData = new int[4, 3];
-            this.heightData[0, 0] = 0;
-            this.heightData[1, 0] = 0;
-            this.heightData[2, 0] = 0;
-            this.heightData[3, 0] = 0;
+            var fileStream = new FileStream("heightmap.bmp", FileMode.Open, FileAccess.Read);
+            var binaryReader = new BinaryReader(fileStream);
 
-            this.heightData[0, 1] = 1;
-            this.heightData[1, 1] = 0;
-            this.heightData[2, 1] = 2;
-            this.heightData[3, 1] = 2;
+            // Scroll to the byte that indicates the offset to the actual pixeldata. To do this, simply read 10 bytes to position our reader at byte 11, the first offset byte.
+            for (var i = 0; i < 10; i++)
+            {
+                binaryReader.ReadByte();
+            }
 
-            this.heightData[0, 2] = 2;
-            this.heightData[1, 2] = 2;
-            this.heightData[2, 2] = 4;
-            this.heightData[3, 2] = 2;
+            // The following 4 bytes represent the offset. 
+            // Since every byte can only represent a value between 0 and 255, the first byte has to be multiplied by 1, the second by 256, the next by 256*256 and so on
+            int offset = binaryReader.ReadByte();
+            offset += binaryReader.ReadByte() * 256;
+            offset += binaryReader.ReadByte() * 256 * 256;
+            offset += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            // Next we scroll further another 4 bytes to byte 19, where we find the WIDTH and the HEIGHT of the image
+            for (var i = 0; i < 4; i++)
+            {
+                binaryReader.ReadByte();
+            }
+
+            this.triangleGridWidth = binaryReader.ReadByte();
+            this.triangleGridWidth += binaryReader.ReadByte() * 256;
+            this.triangleGridWidth += binaryReader.ReadByte() * 256 * 256;
+            this.triangleGridWidth += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            this.triangleGridHeight = binaryReader.ReadByte();
+            this.triangleGridHeight += binaryReader.ReadByte() * 256;
+            this.triangleGridHeight += binaryReader.ReadByte() * 256 * 256;
+            this.triangleGridHeight += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            // Now we can initialise our heightData array and scroll further to the pixeldata:
+
+            this.heightData = new int[this.triangleGridWidth,this.triangleGridHeight];
+
+            for (var i = 0; i < (offset - 26); i++)
+            {
+                binaryReader.ReadByte();
+            }
+
+            // Read until the end the bytes corresponding to the color of each pixel
+            for (var i = 0; i < this.triangleGridHeight; i++)
+            {
+                for (var y = 0; y < this.triangleGridWidth; y++)
+                {
+                    // We are going to store the sum of the 3 colors as the height for a pixel. Divide to normalize
+                    int height = binaryReader.ReadByte();
+                    height += binaryReader.ReadByte();
+                    height += binaryReader.ReadByte();
+                    height /= 8;
+
+                    this.heightData[this.triangleGridWidth - 1 - y, this.triangleGridHeight - 1 - i] = height;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reads the keyboard and places the angle for rotation
+        /// </summary>
+        private void ReadKeyboard()
+        {
+            KeyboardState keys = this.keyboardDevice.GetCurrentKeyboardState();
+
+            if (keys[Key.Delete])
+            {
+                this.angle += 0.03f;
+            }
+            if (keys[Key.Next])
+            {
+                this.angle -= 0.03f;
+            }
         }
     }
 }

@@ -1,19 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.2.LinkingToDevice", "RiemersTutorials.DirectX.CSharp.Terrain.LinkingToDevice\RiemersTutorials.DirectX.CSharp.Terrain.2.LinkingToDevice.csproj", "{EB0D54ED-E703-4501-843B-B291D3E15E25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.02.LinkingToDevice", "RiemersTutorials.DirectX.CSharp.Terrain.LinkingToDevice\RiemersTutorials.DirectX.CSharp.Terrain.02.LinkingToDevice.csproj", "{EB0D54ED-E703-4501-843B-B291D3E15E25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.1.OpeningAWindow", "RiemersTutorials.DirectX.CSharp.Terrain.OpeningAWindow\RiemersTutorials.DirectX.CSharp.Terrain.1.OpeningAWindow.csproj", "{D26330FD-706A-4BED-9949-FCE4E8C93C73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.01.OpeningAWindow", "RiemersTutorials.DirectX.CSharp.Terrain.OpeningAWindow\RiemersTutorials.DirectX.CSharp.Terrain.01.OpeningAWindow.csproj", "{D26330FD-706A-4BED-9949-FCE4E8C93C73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.3.DrawingATriangle", "RiemersTutorials.DirectX.CSharp.Terrain.DrawingATriangle\RiemersTutorials.DirectX.CSharp.Terrain.3.DrawingATriangle.csproj", "{A784500E-221B-4AC4-B891-CC86D953FD32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.03.DrawingATriangle", "RiemersTutorials.DirectX.CSharp.Terrain.DrawingATriangle\RiemersTutorials.DirectX.CSharp.Terrain.03.DrawingATriangle.csproj", "{A784500E-221B-4AC4-B891-CC86D953FD32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.4.Camera", "RiemersTutorials.DirectX.CSharp.Terrain.Camera\RiemersTutorials.DirectX.CSharp.Terrain.4.Camera.csproj", "{D1BB007B-C924-4D8C-8934-1CC037165FBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.04.Camera", "RiemersTutorials.DirectX.CSharp.Terrain.Camera\RiemersTutorials.DirectX.CSharp.Terrain.04.Camera.csproj", "{D1BB007B-C924-4D8C-8934-1CC037165FBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.5.RotationAndTranslation", "RiemersTutorials.DirectX.CSharp.Terrain.RotationAndTranslation\RiemersTutorials.DirectX.CSharp.Terrain.5.RotationAndTranslation.csproj", "{EE217FFD-8283-41E5-AEDA-5E9577C68414}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.05.RotationAndTranslation", "RiemersTutorials.DirectX.CSharp.Terrain.RotationAndTranslation\RiemersTutorials.DirectX.CSharp.Terrain.05.RotationAndTranslation.csproj", "{EE217FFD-8283-41E5-AEDA-5E9577C68414}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.6.Indices", "RiemersTutorials.DirectX.CSharp.Terrain.Indices\RiemersTutorials.DirectX.CSharp.Terrain.6.Indices.csproj", "{A5EEC089-9238-44AC-BC42-97C8EC83A081}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.06.Indices", "RiemersTutorials.DirectX.CSharp.Terrain.Indices\RiemersTutorials.DirectX.CSharp.Terrain.06.Indices.csproj", "{A5EEC089-9238-44AC-BC42-97C8EC83A081}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.7.TerrainCreation", "RiemersTutorials.DirectX.CSharp.Terrain.TerrainCreation\RiemersTutorials.DirectX.CSharp.Terrain.7.TerrainCreation.csproj", "{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.07.TerrainCreation", "RiemersTutorials.DirectX.CSharp.Terrain.TerrainCreation\RiemersTutorials.DirectX.CSharp.Terrain.07.TerrainCreation.csproj", "{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.08.TerrainFromFile", "RiemersTutorials.DirectX.CSharp.Terrain.TerrainFromFile\RiemersTutorials.DirectX.CSharp.Terrain.08.TerrainFromFile.csproj", "{001EA279-628F-4B8B-9E79-7D7BE698944C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.09.DirectInput", "RiemersTutorials.DirectX.CSharp.Terrain.DirectInput\RiemersTutorials.DirectX.CSharp.Terrain.09.DirectInput.csproj", "{99F7F712-B2E7-49C7-AA82-C898C58D3576}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.10.ImportingBmpFiles", "RiemersTutorials.DirectX.CSharp.Terrain.ImportingBmpFiles\RiemersTutorials.DirectX.CSharp.Terrain.10.ImportingBmpFiles.csproj", "{91B015F2-45FA-4E61-A4C4-8640B72356F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +55,18 @@ Global
 		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A5D28C7-8114-4EB6-8D11-A3D9FC745A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{001EA279-628F-4B8B-9E79-7D7BE698944C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{001EA279-628F-4B8B-9E79-7D7BE698944C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{001EA279-628F-4B8B-9E79-7D7BE698944C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{001EA279-628F-4B8B-9E79-7D7BE698944C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99F7F712-B2E7-49C7-AA82-C898C58D3576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99F7F712-B2E7-49C7-AA82-C898C58D3576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99F7F712-B2E7-49C7-AA82-C898C58D3576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99F7F712-B2E7-49C7-AA82-C898C58D3576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91B015F2-45FA-4E61-A4C4-8640B72356F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91B015F2-45FA-4E61-A4C4-8640B72356F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91B015F2-45FA-4E61-A4C4-8640B72356F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91B015F2-45FA-4E61-A4C4-8640B72356F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

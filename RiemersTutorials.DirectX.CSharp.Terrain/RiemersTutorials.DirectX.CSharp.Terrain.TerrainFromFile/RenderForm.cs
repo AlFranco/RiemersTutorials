@@ -5,14 +5,15 @@
 // <summary>
 //   Riemers Tutorials of DirectX with C#
 //   Chapter 1 Terrain
-//   SubChapter 7 Terrain creation basics
+//   SubChapter 7 Terrain creation from file
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
+namespace RiemersTutorials.DirectX.CSharp.Terrain.TerrainFromFile
 {
     using System;
     using System.Drawing;
+    using System.IO;
     using System.Windows.Forms;
 
     using Microsoft.DirectX;
@@ -52,15 +53,15 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         /// <summary>
         /// Sets how many vertices in width the triangle grid will have
         /// </summary>
-        private int triangleGridWidth = 4;
+        private int triangleGridWidth = 64;
 
         /// <summary>
         /// Sets how many vertices in height the triangle grid will have
         /// </summary>
-        private int triangleGridHeight = 3;
+        private int triangleGridHeight = 64;
 
         /// <summary>
-        /// Array to hold the information of the heigh on each vertex
+        /// Array to hold the information of the height on each vertex
         /// </summary>
         private int[,] heightData;
 
@@ -140,7 +141,7 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         {
             // The Clear method will fill the window with a solid color, darkslateblue in our case
             // The ClearFlags indicate what we actually want to clear, in our case the target window
-            this.device.Clear(ClearFlags.Target, Color.DarkSlateBlue, 1.0f, 0);
+            this.device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
 
             // Tell the device the we’re going to build the 'scene'
             // The scene is the whole world of objects the device has to display
@@ -154,6 +155,8 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
 
             // Set how those vertices are going to be indexed on the screen
             this.device.Indices = this.indexBuffer;
+
+            device.Transform.World = Matrix.Translation(-this.triangleGridHeight / 2f, -this.triangleGridWidth / 2f, 0);
 
             // This line actually draws the index primitives
             // The first argument indicates that it has to paint triangles
@@ -214,15 +217,14 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
             // Near clipping plane : any objects closer to the camera than 1f will not be shown
             // Far clipping pane : any object farther than 50f won't be shown 
             this.device.Transform.Projection = Matrix.PerspectiveFovLH(
-                (float)Math.PI / 4, (float)this.Width / this.Height, 1f, 50f);
+                (float)Math.PI / 4, this.Width / this.Height, 1f, 150f);
 
             // Position the camera
-            // Define the position we position it 30 units above our (0,0,0) point, the origin
-            // Set the target point the camera is looking at. We will be looking at our origin
+            // Define the position we position
+            // Set the target point the camera is looking at.
             // Define which vector will be considered as 'up'
-            // this.device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, 30), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-            // Since the coordinates system is left-handed to see the green corner on lower right we have to position the camera in -Z axis
-            this.device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, 15), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            this.device.Transform.View = Matrix.LookAtLH(
+                new Vector3(0, -40, 50), new Vector3(0, -5, 0), new Vector3(0, 1, 0));
 
             // We are also required to place some lights to avoid the triangle to be black
             // Disable lighting to avoid this problem for now
@@ -238,7 +240,13 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         private void VertexDeclaration()
         {
             // Create Vertex Buffer with some parameters
-            this.vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionColored), this.triangleGridWidth * this.triangleGridHeight, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionColored.Format, Pool.Default);
+            this.vertexBuffer = new VertexBuffer(
+                typeof(CustomVertex.PositionColored),
+                this.triangleGridWidth * this.triangleGridHeight,
+                this.device,
+                Usage.Dynamic | Usage.WriteOnly,
+                CustomVertex.PositionColored.Format,
+                Pool.Default);
 
             // Create an array to hold the information for 3 vertices.
             // Change from TransformedColored to PositionColored
@@ -332,25 +340,25 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.Indices
         }
 
         /// <summary>
-        /// Initialized the heigh information on every vertex
+        /// Initialized the height information on every vertex
         /// </summary>
         private void LoadHeightData()
         {
-            this.heightData = new int[4, 3];
-            this.heightData[0, 0] = 0;
-            this.heightData[1, 0] = 0;
-            this.heightData[2, 0] = 0;
-            this.heightData[3, 0] = 0;
+            this.heightData = new int[this.triangleGridWidth,this.triangleGridHeight];
 
-            this.heightData[0, 1] = 1;
-            this.heightData[1, 1] = 0;
-            this.heightData[2, 1] = 2;
-            this.heightData[3, 1] = 2;
+            var fileStream = new FileStream("heightdata.raw", FileMode.Open, FileAccess.Read);
+            var binaryReader = new BinaryReader(fileStream);
 
-            this.heightData[0, 2] = 2;
-            this.heightData[1, 2] = 2;
-            this.heightData[2, 2] = 4;
-            this.heightData[3, 2] = 2;
+            for (var i = 0; i < this.triangleGridHeight; i++)
+            {
+                for (var y = 0; y < this.triangleGridWidth; y++)
+                {
+                    var height = binaryReader.ReadByte() / 50;
+                    this.heightData[this.triangleGridWidth - 1 - y, this.triangleGridHeight - 1 - i] = height;
+                }
+            }
+
+            fileStream.Close();
         }
     }
 }
