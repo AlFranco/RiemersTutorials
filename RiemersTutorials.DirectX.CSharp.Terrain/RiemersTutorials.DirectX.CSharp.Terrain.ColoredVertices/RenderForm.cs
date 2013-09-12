@@ -5,11 +5,11 @@
 // <summary>
 //   Riemers Tutorials of DirectX with C#
 //   Chapter 1 Terrain
-//   SubChapter 9 Rotate your terrain using the keyboard
+//   SubChapter 11 Adding some color and the Z-Buffer
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
+namespace RiemersTutorials.DirectX.CSharp.Terrain.ColoredVertices
 {
     using System;
     using System.Drawing;
@@ -39,7 +39,7 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
         /// <summary>
         /// Our angle of rotation obtained from the keyboard
         /// </summary>
-        private float angle = 0f;
+        private float angle;
 
         /// <summary>
         /// Vertices set as private attribute for refactoring in methods
@@ -75,6 +75,16 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
         /// Array to hold the information of the height on each vertex
         /// </summary>
         private int[,] heightData;
+
+        /// <summary>
+        /// Minimum height in our image
+        /// </summary>
+        private int minimumHeight = 255;
+
+        /// <summary>
+        /// Maximum height in our image
+        /// </summary>
+        private int maximumHeight = 0;
 
         /// <summary>
         /// The components.
@@ -128,20 +138,48 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
             // Presentation Parameters, which we will need to tell the device how to behave
             // Windowed = true => We don't want a fullscreen application
             // SwapEffect = SwapEffect.Discard => Write to the device immediately, do not add extra back buffer that will be presented (= swapped) at runtime
-            var presentParams = new PresentParameters { Windowed = true, SwapEffect = SwapEffect.Discard };
+            // AutoDepthStencilFormat = DepthFormat.D16 => Here you create a Z-buffer with a precision of 16 bits. 
+            // What this means in short: Every distance is presented between 0 and 1, with 0 being the near plane (1f in our case) and 1 being the far plane (250f in our case). 
+            // With 16 bits, you have 2^16 = 65536 possible distances between them
+            // EnableAutoDepthStencil = true => Enable Z-Buffer
+            var presentParams = new PresentParameters
+                                    {
+                                        Windowed = true,
+                                        SwapEffect = SwapEffect.Discard,
+                                        AutoDepthStencilFormat = DepthFormat.D16,
+                                        EnableAutoDepthStencil = true
+                                    };
 
             // Creation of the Device:
             // 0 selects the first graphical adapter in your PC
             // Render the graphics using the hardware
             // Bind 'this' window to the device 
             // For now we want all 'vertex processing' to happen on the CPU
-            this.graphicsDevice = new Microsoft.DirectX.Direct3D.Device(0, Microsoft.DirectX.Direct3D.DeviceType.Hardware, this, CreateFlags.HardwareVertexProcessing, presentParams);
-
-            // Set the device in wireframe mode
-            this.graphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+            this.graphicsDevice = new Microsoft.DirectX.Direct3D.Device(
+                0,
+                Microsoft.DirectX.Direct3D.DeviceType.Hardware,
+                this,
+                CreateFlags.HardwareVertexProcessing,
+                presentParams);
 
             // Fix for window resizing for the demo
             this.graphicsDevice.DeviceReset += this.HandleResetEvent;
+        }
+
+        /// <summary>
+        /// Initialize the keyboard device
+        /// </summary>
+        public void InitializeKeyboard()
+        {
+            // The first line allocates the system's default keyboard to your variable keyb. 
+            this.keyboardDevice = new Microsoft.DirectX.DirectInput.Device(SystemGuid.Keyboard);
+
+            // Then you set some flags that adds default keyboard behavior to keyb. For example, if your window loses focus, your keyboard won't be attached to it any longer. 
+            this.keyboardDevice.SetCooperativeLevel(
+                this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+
+            // Don't forget to acquire your keyboard and to call this method from your Main method:
+            this.keyboardDevice.Acquire();
         }
 
         /// <summary>
@@ -154,8 +192,12 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
         protected override void OnPaint(PaintEventArgs e)
         {
             // The Clear method will fill the window with a solid color, darkslateblue in our case
-            // The ClearFlags indicate what we actually want to clear, in our case the target window
-            this.graphicsDevice.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+            // The ClearFlags indicate what we actually want to clear, in our case the target window and the Z-Buffer
+            // We need to fill our ZDepth buffer with zeroes. 
+            // When we would draw a triangle, it would be further away from the viewer than what was previously defined in the Z-buffer, so our triangle is discarded. 
+            // So in fact, we have to first fill our buffer with ones.
+            this.graphicsDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
 
             // Tell the device the we’re going to build the 'scene'
             // The scene is the whole world of objects the device has to display
@@ -171,7 +213,8 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
             this.graphicsDevice.Indices = this.indexBuffer;
 
             // Set the world matrix doing a translation based on the size of the trianglegrid and a rotation angle stablished by our keyboard
-            this.graphicsDevice.Transform.World = Matrix.Translation(-this.triangleGridHeight / 2, -this.triangleGridWidth / 2, 0) * Matrix.RotationZ(this.angle);
+            this.graphicsDevice.Transform.World = Matrix.Translation(
+                -this.triangleGridHeight / 2, -this.triangleGridWidth / 2, 0) * Matrix.RotationZ(this.angle);
 
             // This line actually draws the index primitives
             // The first argument indicates that it has to paint triangles
@@ -179,7 +222,13 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
             // Then you indicate the minimum amount of used indices. We give 0, which will bring no speed optimization. 
             // Then the amount of used vertices and the starting point in our vertexbuffer. 
             // Finally, we have to indicate how many primitives (=triangles) we want to be drawn.
-            this.graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, this.triangleGridWidth * this.triangleGridHeight, 0, this.indices.Length / 3);
+            this.graphicsDevice.DrawIndexedPrimitives(
+                PrimitiveType.TriangleList,
+                0,
+                0,
+                this.triangleGridWidth * this.triangleGridHeight,
+                0,
+                this.indices.Length / 3);
 
             // End of the scene definition
             this.graphicsDevice.EndScene();
@@ -233,16 +282,16 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
             // First parameter sets the view angle, 90° in our case
             // Set the view aspect ratio, which is 1 in our case, will be different if our window is a rectangle instead of a square
             // Near clipping plane : any objects closer to the camera than 1f will not be shown
-            // Far clipping pane : any object farther than 50f won't be shown 
+            // Far clipping pane : any object farther than 250f won't be shown 
             this.graphicsDevice.Transform.Projection = Matrix.PerspectiveFovLH(
-                (float)Math.PI / 4, this.Width / this.Height, 1f, 150f);
+                (float)Math.PI / 4, this.Width / this.Height, 1f, 250f);
 
             // Position the camera
             // Define the position we position
             // Set the target point the camera is looking at.
             // Define which vector will be considered as 'up'
             this.graphicsDevice.Transform.View = Matrix.LookAtLH(
-                new Vector3(0, -40, 50), new Vector3(0, -5, 0), new Vector3(0, 1, 0));
+                new Vector3(80, 0, 120), new Vector3(-20, 0, 0), new Vector3(0, 0, 1));
 
             // We are also required to place some lights to avoid the triangle to be black
             // Disable lighting to avoid this problem for now
@@ -273,15 +322,33 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
             this.vertices = new CustomVertex.PositionColored[this.triangleGridWidth * this.triangleGridHeight];
 
             // Fill in the position and information for 3 points. 
-            // The'f' behind the numbers simply convert the integers to floats, the expected format.
             // If you position the camera on the negative z-axis, the triangle will be defined counter-clockwise relative to the camera and not be drawn
+            // Define four areas that will have different colours depending on the height
+            // At the bottom we have blue lakes, then the green trees, the brown mountain and finally snow topped peaks.
             // Redefine the vertices clockwise to solve the problem (this time clockwise relative to our camera on the negative part of the Z axis) :
             for (var x = 0; x < this.triangleGridWidth; x++)
             {
                 for (var y = 0; y < this.triangleGridHeight; y++)
                 {
                     this.vertices[x + (y * this.triangleGridWidth)].Position = new Vector3(x, y, this.heightData[x, y]);
-                    this.vertices[x + (y * this.triangleGridWidth)].Color = Color.White.ToArgb();
+
+                    if (this.heightData[x, y] < this.minimumHeight + (this.maximumHeight - this.minimumHeight) / 4)
+                    {
+                        this.vertices[x + y * this.triangleGridWidth].Color = Color.Blue.ToArgb();
+                    }
+                    else if (this.heightData[x, y]
+                             < this.minimumHeight + (this.maximumHeight - this.minimumHeight) * 2 / 4)
+                    {
+                        this.vertices[x + y * this.triangleGridWidth].Color = Color.Green.ToArgb();
+                    }
+                    else if (heightData[x, y] < this.minimumHeight + (this.maximumHeight - this.minimumHeight) * 3 / 4)
+                    {
+                        this.vertices[x + y * this.triangleGridWidth].Color = Color.Brown.ToArgb();
+                    }
+                    else
+                    {
+                        this.vertices[x + y * this.triangleGridWidth].Color = Color.White.ToArgb();
+                    }
                 }
             }
 
@@ -345,7 +412,7 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
         private void HandleResetEvent(object sender, EventArgs e)
         {
             // Reset the WireFrame mode
-            this.graphicsDevice.RenderState.FillMode = FillMode.WireFrame;
+            // this.graphicsDevice.RenderState.FillMode = FillMode.WireFrame;
 
             // Position the camera
             this.CameraPositioning();
@@ -362,36 +429,69 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
         /// </summary>
         private void LoadHeightData()
         {
-            this.heightData = new int[this.triangleGridWidth,this.triangleGridHeight];
-
-            var fileStream = new FileStream("heightdata.raw", FileMode.Open, FileAccess.Read);
+            var fileStream = new FileStream("heightmap.bmp", FileMode.Open, FileAccess.Read);
             var binaryReader = new BinaryReader(fileStream);
 
+            // Scroll to the byte that indicates the offset to the actual pixeldata. To do this, simply read 10 bytes to position our reader at byte 11, the first offset byte.
+            for (var i = 0; i < 10; i++)
+            {
+                binaryReader.ReadByte();
+            }
+
+            // The following 4 bytes represent the offset. 
+            // Since every byte can only represent a value between 0 and 255, the first byte has to be multiplied by 1, the second by 256, the next by 256*256 and so on
+            int offset = binaryReader.ReadByte();
+            offset += binaryReader.ReadByte() * 256;
+            offset += binaryReader.ReadByte() * 256 * 256;
+            offset += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            // Next we scroll further another 4 bytes to byte 19, where we find the WIDTH and the HEIGHT of the image
+            for (var i = 0; i < 4; i++)
+            {
+                binaryReader.ReadByte();
+            }
+
+            this.triangleGridWidth = binaryReader.ReadByte();
+            this.triangleGridWidth += binaryReader.ReadByte() * 256;
+            this.triangleGridWidth += binaryReader.ReadByte() * 256 * 256;
+            this.triangleGridWidth += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            this.triangleGridHeight = binaryReader.ReadByte();
+            this.triangleGridHeight += binaryReader.ReadByte() * 256;
+            this.triangleGridHeight += binaryReader.ReadByte() * 256 * 256;
+            this.triangleGridHeight += binaryReader.ReadByte() * 256 * 256 * 256;
+
+            // Now we can initialise our heightData array and scroll further to the pixeldata:
+            this.heightData = new int[this.triangleGridWidth,this.triangleGridHeight];
+
+            for (var i = 0; i < (offset - 26); i++)
+            {
+                binaryReader.ReadByte();
+            }
+
+            // Read until the end the bytes corresponding to the color of each pixel
             for (var i = 0; i < this.triangleGridHeight; i++)
             {
                 for (var y = 0; y < this.triangleGridWidth; y++)
                 {
-                    var height = binaryReader.ReadByte() / 50;
+                    // We are going to store the sum of the 3 colors as the height for a pixel. Divide to normalize
+                    int height = binaryReader.ReadByte();
+                    height += binaryReader.ReadByte();
+                    height += binaryReader.ReadByte();
+                    height /= 8;
+
                     this.heightData[this.triangleGridWidth - 1 - y, this.triangleGridHeight - 1 - i] = height;
+
+                    if (height < this.minimumHeight)
+                    {
+                        this.minimumHeight = height;
+                    }
+                    if (height > this.maximumHeight)
+                    {
+                        this.maximumHeight = height;
+                    }
                 }
             }
-
-            fileStream.Close();
-        }
-
-        /// <summary>
-        /// Initialize the keyboard device
-        /// </summary>
-        public void InitializeKeyboard()
-        {
-            // The first line allocates the system's default keyboard to your variable keyb. 
-            this.keyboardDevice = new Microsoft.DirectX.DirectInput.Device(SystemGuid.Keyboard);
-
-            // Then you set some flags that adds default keyboard behavior to keyb. For example, if your window loses focus, your keyboard won't be attached to it any longer. 
-            this.keyboardDevice.SetCooperativeLevel(this, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-
-            // Don't forget to acquire your keyboard and to call this method from your Main method:
-            this.keyboardDevice.Acquire();
         }
 
         /// <summary>
@@ -403,11 +503,11 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.DirectInput
 
             if (keys[Key.Delete])
             {
-                angle += 0.03f;
+                this.angle += 0.03f;
             }
             if (keys[Key.Next])
             {
-                angle -= 0.03f;
+                this.angle -= 0.03f;
             }
         }
     }

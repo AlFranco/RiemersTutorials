@@ -5,7 +5,7 @@
 // <summary>
 //   Riemers Tutorials of DirectX with C#
 //   Chapter 1 Terrain
-//   SubChapter 7 Terrain creation from file
+//   SubChapter 10 Importing height data from .bmp files 
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
