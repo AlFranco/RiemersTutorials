@@ -176,8 +176,6 @@ namespace RiemersTutorials.DirectX.CSharp.Terrain.LightBasics
             this.device.Transform.View = Matrix.LookAtLH(
                 new Vector3(0, -40, 100), new Vector3(0, 50, 0), new Vector3(0, 1, 0));
 
-
-
             // Tell the system that now we are using lights
             this.device.RenderState.Lighting = true;
 

@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.12.LightBasics", "RiemersTutorials.DirectX.CSharp.Terrain.LightBasics\RiemersTutorials.DirectX.CSharp.Terrain.12.LightBasics.csproj", "{03820AF3-8E19-4F88-A87C-9052301375FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.13.MeshCreation", "RiemersTutorials.DirectX.CSharp.Terrain.MeshCreation\RiemersTutorials.DirectX.CSharp.Terrain.13.MeshCreation.csproj", "{DB3728F9-7AFB-4429-A3BB-5EC91039EE24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RiemersTutorials.DirectX.CSharp.Terrain.14.MeshLighting", "RiemersTutorials.DirectX.CSharp.Terrain.MeshLighting\RiemersTutorials.DirectX.CSharp.Terrain.14.MeshLighting.csproj", "{2D77550F-430B-4CB6-AC00-F55506C1A6D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,14 @@ Global
 		{03820AF3-8E19-4F88-A87C-9052301375FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03820AF3-8E19-4F88-A87C-9052301375FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03820AF3-8E19-4F88-A87C-9052301375FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB3728F9-7AFB-4429-A3BB-5EC91039EE24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB3728F9-7AFB-4429-A3BB-5EC91039EE24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB3728F9-7AFB-4429-A3BB-5EC91039EE24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB3728F9-7AFB-4429-A3BB-5EC91039EE24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D77550F-430B-4CB6-AC00-F55506C1A6D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D77550F-430B-4CB6-AC00-F55506C1A6D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D77550F-430B-4CB6-AC00-F55506C1A6D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D77550F-430B-4CB6-AC00-F55506C1A6D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
